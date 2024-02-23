@@ -1,3 +1,5 @@
+[*test 2 medium*]
+
 [* this is comment for this sample code which
 converts Fahrenheit into Celcius *]
 $
