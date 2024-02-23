@@ -1,0 +1,7 @@
+[* test 1 *]
+
+while (fahr <= upper) a = 23.00; [* this is a sample *]
+
+a+b = c
+
+while 
