@@ -111,3 +111,5 @@ maximum point you will get is 10 – ( 2 + .6 ) = 7.4
 Final Notes: - You will most likely not pass this course without doing the projects.
 - The projects are built on each other,
 so make sure that you do well the first project
+
+First due date March 2nd
