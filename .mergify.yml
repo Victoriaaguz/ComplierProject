@@ -1,8 +1,8 @@
 pull_request_rules:
-  - name: automatic merge when CI checks pass and at least 2 approved reviews
+  - name: Automatic merge when CI passes and reviews approve
     conditions:
-      - check-success=test
       - "#approved-reviews-by>=2"
+      - check-success=CI # replace "CI" with the name of your CI status check
     actions:
-      merge:
-        method: squash
+      queue:
+        merge_method: merge
