@@ -112,4 +112,4 @@ Final Notes: - You will most likely not pass this course without doing the proje
 - The projects are built on each other,
 so make sure that you do well the first project
 
-First due date March 2nd
+First due date: Saturday March 2nd
