@@ -139,12 +139,18 @@ void writeTokensToFile(const std::vector<Token>& tokens, const std::string& outp
 
 int main() {
     // Read code from file
-    std::ifstream input_file("input_code.txt");
-    if (!input_file.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
+    std::cout << "Enter filename: "; 
+    std::string filename;
+    std::getline(std::cin, filename);
+    if (filename.empty()) {
+        std::cerr << "Error: Empty filename." << std::endl;
         return 1;
     }
-
+    std::ifstream input_file(filename);
+    if (!input_file.is_open()){
+        std::cerr << "Error Opening file: " << filename << std::endl;
+        return 1;
+    }
     // Read the entire file content into a string
     std::string source_code((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
 
@@ -158,7 +164,7 @@ int main() {
     displayTokens(tokens);
 
     // Write tokens to an output file
-    writeTokensToFile(tokens, "output_tokens.txt");
+    writeTokensToFile(tokens, filename + "output.txt");
 
     return 0;
 }
