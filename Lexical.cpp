@@ -3,22 +3,24 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-#include <map>
 
 using namespace std;
 
-enum TokenType {
+enum TokenType
+{
     KEYWORD,
     IDENTIFIER,
     INTEGER,
     REAL,
     OPERATOR,
     SEPARATOR,
+    ILLEGAL,
     STRING
 };
 
 // Define a struct to represent tokens
-struct Token {
+struct Token
+{
     TokenType type;
     string lexeme;
 };
@@ -30,138 +32,235 @@ unordered_set<string> keywords = {
     "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try",
     "while", "with", "yield"};
 
-std::string symbol(1, remaining_code[0]);
-            remaining_code = remaining_code.substr(1);
-
-            std::map<std::string, TokenType> symbolMap;
-            symbolMap["=="] = OPERATOR;
-            symbolMap["!="] = OPERATOR;
-            symbolMap[">"] = OPERATOR;
-            symbolMap["<"] = OPERATOR;
-            symbolMap["<="] = OPERATOR;
-            symbolMap[">="] = OPERATOR;
-            symbolMap["+"] = OPERATOR;
-            symbolMap["-"] = OPERATOR;
-            symbolMap["*"] = OPERATOR;
-            symbolMap["/"] = OPERATOR;
-bool isSeparator(char ch) {
-     return ch == '(' || ch == ')' || ch == ';' || ch == ':' || ch == ',' || ch == '{' || ch == '}';
+bool isSeparator(char ch)
+{
+    return ch == '(' || ch == ')' || ch == ';' || ch == ':' || ch == ',' || ch == '{' || ch == '}' || ch == '$';
 }
 
-/*bool isOperatorChar(char ch) {
-     return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '<' || ch == '>' || ch == '='|| ch == '=='|| ch == '!' || ch == '=>' || ch == '=< '|| ch == '!=';
+bool isOperatorChar(char ch)
+{
+    return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '<' || ch == '>' || ch == '=' || ch == '!';
 }
-*/
 
-vector<Token> lexer(const string& line) {
+bool is_keyword(const string &lexeme)
+{
+    return keywords.find(lexeme) != keywords.end();
+}
+
+bool contains_invalid_characters(const string &lexeme)
+{
+    return lexeme.find('_') != string::npos || lexeme.find('"') != string::npos;
+}
+
+void update_identifier_type(Token &token) {
+    if (token.type == IDENTIFIER) {
+        if (keywords.find(token.lexeme) != keywords.end()) {
+            token.type = KEYWORD;
+        } else if (!contains_invalid_characters(token.lexeme)) {
+            token.type = IDENTIFIER;
+        } else {
+            if (token.lexeme.size() > 1 && token.lexeme.front() == '_' && token.lexeme.back() == '_') {
+                token.type = ILLEGAL;
+            } else {
+                token.type = IDENTIFIER;
+            }
+        }
+    }
+}
+
+void update_integer_type(Token &token)
+{
+    if (token.type == INTEGER)
+    {
+        if (token.lexeme.find('.') != string::npos)
+        {
+            token.type = REAL;
+        }
+    }
+}
+vector<Token> lexer(const string &line)
+{
     vector<Token> tokens;
     string currentLexeme;
-    TokenType currentTokenType = IDENTIFIER; // Initial type, will be updated as necessary
+    TokenType currentTokenType = ILLEGAL; // Initial type, will be updated as necessary
     bool inStringLiteral = false;
     bool inComment = false; // Flag to track comment status
 
-    for (size_t i = 0; i < line.length(); ++i) {
+    for (size_t i = 0; i < line.length(); ++i)
+    {
         char ch = line[i];
 
         // Check for the start of a comment block
-        if (!inStringLiteral && i + 1 < line.length() && ch == '[' && line[i + 1] == '*') {
+        if (!inStringLiteral && i + 1 < line.length() && ch == '[' && line[i + 1] == '*')
+        {
             inComment = true;
             i++; // Skip the '*' to avoid parsing it again
             continue;
         }
 
         // Check for the end of a comment block
-        if (inComment && i + 1 < line.length() && ch == '*' && line[i + 1] == ']') {
+        if (inComment && i + 1 < line.length() && ch == '*' && line[i + 1] == ']')
+        {
             inComment = false;
             i++; // Skip the ']' to avoid parsing it again
             continue;
         }
 
         // Skip all characters within a comment
-        if (inComment) continue;
+        if (inComment)
+            continue;
 
-        if (isspace(ch)) {
-            if (!currentLexeme.empty()) {
+        if (isspace(ch))
+        {
+            if (!currentLexeme.empty())
+            {
                 tokens.push_back({currentTokenType, currentLexeme});
                 currentLexeme.clear();
             }
-        } else if (isSeparator(ch)) {
-            if (!currentLexeme.empty()) {
+        }
+        else if (isSeparator(ch))
+        {
+            if (!currentLexeme.empty())
+            {
                 tokens.push_back({currentTokenType, currentLexeme});
                 currentLexeme.clear();
             }
             tokens.push_back({SEPARATOR, string(1, ch)});
-        } else if (isOperatorChar(ch)) {
-            if (!currentLexeme.empty()) {
+        }
+        else if (isOperatorChar(ch))
+        {
+            if (!currentLexeme.empty())
+            {
                 tokens.push_back({currentTokenType, currentLexeme});
                 currentLexeme.clear();
             }
             currentLexeme += ch;
             currentTokenType = OPERATOR;
-        } else if (ch == '"' || ch == '\'') {
+        }
+        else if (ch == '"' || ch == '\'')
+        {
+            currentLexeme += ch;
+            currentTokenType = ILLEGAL;
             inStringLiteral = true;
+            
+        }
+        else
+        {
             currentLexeme += ch;
-        } else {
-            currentLexeme += ch;
-            if (isdigit(ch) && currentLexeme.size() == 1) {
-                currentTokenType = INTEGER;
-            } else if (isalpha(ch) || ch == '_') {
-                currentTokenType = IDENTIFIER;
+            if (isalpha(ch))
+            {
+                if (isalpha(currentLexeme[0]) || currentLexeme[0] == '_' || isdigit(ch))
+                {
+                    currentTokenType = IDENTIFIER;
+                }
+                else
+                {
+                    currentTokenType = ILLEGAL;
+                }
+            }
+            else if (isdigit(ch))
+            {
+                if (currentTokenType != REAL && currentLexeme.size() == 1)
+                {
+                    currentTokenType = INTEGER;
+                }
+                else if (currentTokenType == INTEGER && ch == '.')
+                {
+                    currentTokenType = REAL;
+                }
+                else if (currentTokenType == REAL && ch == '.')
+                {
+                    // If already a REAL token and another '.' appears, mark it as ILLEGAL
+                    currentTokenType = ILLEGAL;
+                }
             }
         }
     }
 
     // Handle the last lexeme if it exists and is not part of a comment
-    if (!currentLexeme.empty() && !inComment) {
+    if (!currentLexeme.empty() && !inComment)
+    {
         tokens.push_back({currentTokenType, currentLexeme});
     }
 
     return tokens;
 }
 
-
-void updateTokenTypes(vector<Token>& tokens) {
-    for (auto& token : tokens) {
-        if (token.type == IDENTIFIER) {
-            if (keywords.find(token.lexeme) != keywords.end()) {
-                token.type = KEYWORD;
-            }
-        } else if (token.type == INTEGER) {
-            if (token.lexeme.find('.') != string::npos) {
-                token.type = REAL;
-            }
+void update_token_types(vector<Token> &tokens)
+{
+    for (auto &token : tokens)
+    {
+        if (token.type == TokenType::IDENTIFIER)
+        {
+            update_identifier_type(token);
+        }
+        else if (token.type == TokenType::INTEGER)
+        {
+            update_integer_type(token);
         }
     }
 }
 
-int main() {
-    ifstream file("T1.txt");
-    ofstream outputFile("tokens.txt");
+int main()
+{
+    string FileName;
+    std::cout << "Enter the input file name: ";
+    cin >> FileName;
+    ifstream file(FileName);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         cerr << "Error opening file." << endl;
         return 1;
     }
 
-    if (!outputFile.is_open()) {
+    size_t lastDotPos = FileName.find_last_of('.');
+
+    // Create the output file name by extracting the substring before the last dot
+    string outputFileName = FileName.substr(0, lastDotPos) + "_output.txt";
+
+    ofstream outputFile(outputFileName);
+
+    if (!outputFile.is_open())
+    {
         cerr << "Error opening output file." << endl;
         return 1;
     }
 
     string line;
-    while (getline(file, line)) {
+    while (getline(file, line))
+    {
         vector<Token> tokens = lexer(line);
-        updateTokenTypes(tokens);
-        for (const auto& token : tokens) {
+        update_token_types(tokens);
+        for (const auto &token : tokens)
+        {
             outputFile << "Token: ";
-            switch (token.type) {
-                case KEYWORD: outputFile << "KEYWORD"; break;
-                case IDENTIFIER: outputFile << "IDENTIFIER"; break;
-                case INTEGER: outputFile << "INTEGER"; break;
-                case REAL: outputFile << "REAL"; break;
-                case OPERATOR: outputFile << "OPERATOR"; break;
-                case SEPARATOR: outputFile << "SEPARATOR"; break;
-                case STRING: outputFile << "STRING"; break;
+            switch (token.type)
+            {
+            case KEYWORD:
+                outputFile << "KEYWORD";
+                break;
+            case IDENTIFIER:
+                outputFile << "IDENTIFIER";
+                break;
+            case INTEGER:
+                outputFile << "INTEGER";
+                break;
+            case REAL:
+                outputFile << "REAL";
+                break;
+            case OPERATOR:
+                outputFile << "OPERATOR";
+                break;
+            case SEPARATOR:
+                outputFile << "SEPARATOR";
+                break;
+            case ILLEGAL:
+                outputFile << "ILLEGAL";
+                break;
+            case STRING:
+                outputFile << "STRING";
+                break;
             }
             outputFile << ", Lexeme: " << token.lexeme << endl;
         }
@@ -169,5 +268,6 @@ int main() {
 
     file.close();
     outputFile.close();
+    std::cout << "Output file " << outputFileName << " created successfully." << endl;
     return 0;
 }

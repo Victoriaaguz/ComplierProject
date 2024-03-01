@@ -10,10 +10,13 @@ Token: OPERATOR, Lexeme: =
 Token: REAL, Lexeme: 23.00
 Token: SEPARATOR, Lexeme: ;
 Token: IDENTIFIER, Lexeme: a
-Token: IDENTIFIER, Lexeme: +b
+Token: OPERATOR, Lexeme: +
+Token: IDENTIFIER, Lexeme: b
 Token: OPERATOR, Lexeme: =
 Token: IDENTIFIER, Lexeme: c
 Token: SEPARATOR, Lexeme: ;
+Token: INTEGER, Lexeme: 2
+Token: ILLEGAL, Lexeme: _a_
 Token: KEYWORD, Lexeme: while
-Token: IDENTIFIER, Lexeme: $
+Token: SEPARATOR, Lexeme: $
 Token: IDENTIFIER, Lexeme: new
