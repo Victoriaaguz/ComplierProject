@@ -135,12 +135,18 @@ vector<Token> lexer(const string &line)
                 currentLexeme.clear();
             }
             currentLexeme += ch;
+             // Check if the next character is part of a compound operator
+            if (i + 1 < line.length() && isOperatorChar(ch) && line[i + 1] == '=')
+            {
+                currentLexeme += '=';
+                i++; // Skip the '=' character
+            }
+
             currentTokenType = OPERATOR;
-        }
-        else if (ch == '"' || ch == '\'')
+        } else if (ch == '"' || ch == '\'')
         {
             currentLexeme += ch;
-            currentTokenType = STRING;
+            currentTokenType = ILLEGAL;
             inStringLiteral = true;
             
         }

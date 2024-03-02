@@ -10,7 +10,7 @@ $
 integer low , high , step ; [* declarations *]
 $
 scan ( low , high , step ) ;
-while ( low < = high )
+while ( low <= high )
 { print ( low ) ;
 print ( convertx ( low ) ) ;
 low = low + step ;

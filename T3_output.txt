@@ -25,7 +25,6 @@ Token: IDENTIFIER, Lexeme: generate_random_line
 Token: SEPARATOR, Lexeme: (
 Token: SEPARATOR, Lexeme: )
 Token: IDENTIFIER, Lexeme: code
-Token: IDENTIFIER, Lexeme: .
 Token: IDENTIFIER, Lexeme: cappend
 Token: SEPARATOR, Lexeme: (
 Token: IDENTIFIER, Lexeme: line
@@ -95,8 +94,7 @@ Token: ILLEGAL, Lexeme: "
 Token: ILLEGAL, Lexeme: ]
 Token: SEPARATOR, Lexeme: )
 Token: IDENTIFIER, Lexeme: line
-Token: OPERATOR, Lexeme: +
-Token: OPERATOR, Lexeme: =
+Token: OPERATOR, Lexeme: +=
 Token: IDENTIFIER, Lexeme: operation
 Token: OPERATOR, Lexeme: +
 Token: ILLEGAL, Lexeme: "
@@ -131,8 +129,7 @@ Token: ILLEGAL, Lexeme: "
 Token: ILLEGAL, Lexeme: ]
 Token: SEPARATOR, Lexeme: :
 Token: IDENTIFIER, Lexeme: line
-Token: OPERATOR, Lexeme: +
-Token: OPERATOR, Lexeme: =
+Token: OPERATOR, Lexeme: +=
 Token: IDENTIFIER, Lexeme: generate_random_condition
 Token: SEPARATOR, Lexeme: (
 Token: SEPARATOR, Lexeme: )
@@ -142,15 +139,13 @@ Token: SEPARATOR, Lexeme: :
 Token: ILLEGAL, Lexeme: "
 Token: KEYWORD, Lexeme: elif
 Token: IDENTIFIER, Lexeme: operation
-Token: OPERATOR, Lexeme: =
-Token: OPERATOR, Lexeme: =
+Token: OPERATOR, Lexeme: ==
 Token: ILLEGAL, Lexeme: "
 Token: IDENTIFIER, Lexeme: print
 Token: ILLEGAL, Lexeme: "
 Token: SEPARATOR, Lexeme: :
 Token: IDENTIFIER, Lexeme: line
-Token: OPERATOR, Lexeme: +
-Token: OPERATOR, Lexeme: =
+Token: OPERATOR, Lexeme: +=
 Token: IDENTIFIER, Lexeme: generate_random_string
 Token: SEPARATOR, Lexeme: (
 Token: SEPARATOR, Lexeme: )
@@ -165,8 +160,7 @@ Token: KEYWORD, Lexeme: return
 Token: ILLEGAL, Lexeme: "
 Token: SEPARATOR, Lexeme: :
 Token: IDENTIFIER, Lexeme: line
-Token: OPERATOR, Lexeme: +
-Token: OPERATOR, Lexeme: =
+Token: OPERATOR, Lexeme: +=
 Token: IDENTIFIER, Lexeme: generate_random_number
 Token: SEPARATOR, Lexeme: (
 Token: SEPARATOR, Lexeme: )
