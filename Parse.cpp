@@ -297,7 +297,7 @@ private:
             throw runtime_error("Unexpected token.");
         }
     }
-
+    //R15
     void parseStatement() {
         switch (peek().type) {
         case IDENTIFIER:
@@ -307,7 +307,7 @@ private:
             throw runtime_error("Unexpected token.");
         }
     }
-
+    //R17
     void parseAssign()
     {
         match(IDENTIFIER, "<Statement> -> <Assign>");
@@ -359,6 +359,7 @@ private:
     {
         match(IDENTIFIER, "<Factor> -> <Identifier>");
     }
+    //R12
     void parseDeclaration()
     {
         parseQualifier();
@@ -425,21 +426,21 @@ private:
     match(SEPARATOR, "<Return> -> return;");
 }
 
-
+    //R21
     void parsePrint() {
     match(KEYWORD, "<Print> -> print");
     parseExpression();
     match(SEPARATOR, "<Print> -> print <Expression> ;");
 }
 
-
+    //R22
     void parseScan() {
     match(KEYWORD, "<Scan> -> scan");
     parseIdentifier();
     match(SEPARATOR, "<Scan> -> scan <Identifier> ;");
 }
 
-
+    //R23
     void parseWhile() {
     match(KEYWORD, "<While> -> while");
     match(SEPARATOR, "<While> -> while ( <Condition> )");
@@ -602,7 +603,7 @@ void parseTermPrime() {
         return;// ε (empty) case
     }
 }
-//helper for R28
+//R15
 void parsePrimary() {
     if (peek().type == IDENTIFIER) {
         parseIdentifier();
