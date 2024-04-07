@@ -113,3 +113,4 @@ Final Notes: - You will most likely not pass this course without doing the proje
 so make sure that you do well the first project
 
 First due date: Saturday March 2nd
+Second due date: Sunday April 7th
