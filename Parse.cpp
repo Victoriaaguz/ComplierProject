@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -220,8 +221,25 @@ public:
         }
         cout << "Parsing successful!" << endl;
     }
+    void writeSyntaxToFile(const string &filename)
+    {
+        ofstream outFile(filename);
+        if (!outFile.is_open())
+        {
+            cerr << "Error opening output file." << endl;
+            return;
+        }
+        // Write the input filename
+        outFile << "Input file: " << filename << endl;
+        // Write the syntax stored in syntaxStream to the file
+        outFile << syntaxStream.str();
+        outFile.close();
+        cout << "Syntax written to file: " << filename << endl;
+    }
+
 
 private:
+    ostringstream syntaxStream;
     vector<Token> tokenStream;
     size_t pos;
 
@@ -286,17 +304,6 @@ private:
     }
 }
 
-    void parseStatement()
-    {
-        switch (peek().type)
-        {
-        case IDENTIFIER:
-            parseAssign();
-            break;
-        default:
-            throw runtime_error("Unexpected token.");
-        }
-    }
     //R15
     void parseStatement() {
         switch (peek().type) {
@@ -316,49 +323,6 @@ private:
         match(SEPARATOR, "<Assign> -> <Identifier>  = <Expression> ;");
     }
 
-    void parseExpression()
-    {
-        parseTerm();
-        parseExpressionPrime();
-    }
-
-    void parseExpressionPrime()
-    {
-        switch (peek().type)
-        {
-        case OPERATOR:
-            match(OPERATOR, "<Expression Prime> -> + <Term> <Expression Prime>");
-            parseTerm();
-            parseExpressionPrime();
-            break;
-        default:
-            break; // ε (empty)
-        }
-    }
-
-    void parseTerm()
-    {
-        parseFactor();
-        parseTermPrime();
-    }
-
-    void parseTermPrime()
-    {
-        switch (peek().type)
-        {
-        case OPERATOR:
-            match(OPERATOR, "<Term Prime> -> ε");
-            parseFactor();
-            break;
-        default:
-            break; // ε (empty)
-        }
-    }
-
-    void parseFactor()
-    {
-        match(IDENTIFIER, "<Factor> -> <Identifier>");
-    }
     //R12
     void parseDeclaration()
     {
@@ -391,40 +355,7 @@ private:
             consume(); // Consume the identifier
         } while (peek().type == SEPARATOR && peek().lexeme == ",");
     }
-    
-    
-     void parseIf() {
-    match(KEYWORD, "<if> -> if");
-    if (peek().lexeme == "(") {
-        consume(); // Consume the '(' token
-        parseCondition();
-        if (peek().lexeme == ")") {
-            consume(); // Consume the ')' token
-            parseStatement();
-            if (peek().lexeme == "else") {
-                consume(); // Consume the 'else' token
-                parseStatement();
-            }
-        } else {
-            throw runtime_error("Expected ')' after condition in if statement.");
-        }
-    } else {
-        throw runtime_error("Expected '(' after 'if' keyword.");
-    }
-    match(KEYWORD, "<Prime if> -> endif | else");
-    if (peek().lexeme == "endif") {
-        consume(); // Consume the 'endif' token
-    }
-}
 
-
-    void parseReturn() {
-    match(KEYWORD, "<Return> -> return");
-    if (peek().lexeme != ";") {
-        parseExpression();
-    }
-    match(SEPARATOR, "<Return> -> return;");
-}
 
     //R21
     void parsePrint() {
@@ -499,15 +430,7 @@ void parseStatementListPrime() {
     }
     // This corresponds to the empty case (epsilon) in the grammar
 }
-// helper for R18
-void parseRelationalOperator() {
-    TokenType type = peek().type;
-    if (type == OPERATOR && (peek().lexeme == "<" || peek().lexeme == ">" || peek().lexeme == "<=" || peek().lexeme == ">=" || peek().lexeme == "==" || peek().lexeme == "!=")) {
-        consume();
-    } else {
-        error("Expected a relational operator.");
-    }
-}
+
 //helper for R18
 void parseCondition() {
     parseExpression();
@@ -557,12 +480,7 @@ void parseReturnPrime() {
         }
     }
 }
-//R24
-void parseCondition() {
-    parseExpression();
-    parseRelationalOperator();
-    parseExpression();
-}
+
 //R25
 void parseRelationalOperator() {
     if (peek().lexeme == "==" || peek().lexeme == "!=" || peek().lexeme == ">" ||
@@ -604,7 +522,7 @@ void parseTermPrime() {
     }
 }
 //R15
-void parsePrimary() {
+void parseState() {
     if (peek().type == IDENTIFIER) {
         parseIdentifier();
     } else if (peek().type == INTEGER || peek().type == REAL) {
@@ -695,14 +613,13 @@ int main()
     update_token_types(tokens);
 
     try
-    {
-        Parser parser(tokens);
-        parser.parse();
-    }
-    catch (const exception &e)
-    {
-        cerr << "Error: " << e.what() << endl;
-    }
-
-    return 0;
+{
+    Parser parser(tokens);
+    parser.parse();
+    parser.writeSyntaxToFile("syntax_output.txt");
+}
+catch (const exception &e)
+{
+    cerr << "Error: " << e.what() << endl;
+}
 }
